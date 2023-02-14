@@ -4,6 +4,8 @@ fork of
 
 Authors: Ya. V. Zhumagulov and D. R. Gulevich
 """ project 
-to calculate moire excitons in twisted MX2. fork author I. Begichev
+to calculate moire excitons in twisted MX2. 
+
+fork author I. Begichev
 
 
