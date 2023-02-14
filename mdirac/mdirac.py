@@ -1,54 +1,163 @@
 import math
 import cmath
 import numpy as np
-from numba import jit
-from numba import njit
-from . import interaction # for Hbse_toeplitz
+from scipy.linalg import block_diag
+import matplotlib.pyplot as plt
 
-Hartree=27.211386024367243 # eV
-Bohr=0.5291772105638411 # Angstrom
-    
-s0=np.array([[1,0],[0,1]])
 sx=np.array([[0,1],[1,0]])
 sy=np.array([[0,-1j],[1j,0]])
-sz=np.array([[1,0], [0,-1]])    
-lcp=(sx+1j*sy)/math.sqrt(2.) # Left-hand circular polarized
-rcp=(sx-1j*sy)/math.sqrt(2.) # Right-hand circular polarized
+sz=np.array([[1,0], [0,-1]])
 
-# Returns: E[n], U[n,:]=U[:,n].T for massive Dirac model
-# See Eq.(10) in Ref. G. P. Mikitik and Yu. V. Sharlai
-# Low Temp. Phys. 34, 794 (2008); 
-# https://doi.org/10.1063/1.2981389
-def eighT(mesh,berry=True):
+def Hamiltonian(kx,ky,t):
+    """
+    input: dimensionless kx,ky in units of 2pi/a in BZ
+    output: dimensionless energies and eigenvectors in BZ in units of Eg
+    """
+    ham = 0.5*sz+t*kx*sx+t*ky*sy
+    return ham
+    
+def eighMesh(mesh,t):
     E=np.zeros((mesh.Np,2),dtype=np.float64)
     U=np.zeros((mesh.Np,2,2),dtype=np.complex128)
-    if(berry):
-        func=eighT_single
-    else:
-        func=eighT_noberry
     for i,pi in enumerate(mesh.p):
-        E[i],U[i]=func(pi)
+        ham = Hamiltonian(pi[0],pi[1],t)
+        E[i],U[i]=np.linalg.eigh(ham)
     return E,U
 
-@njit
-def eighT_single(k):
-    k2=k[0]*k[0]+k[1]*k[1]
-    epsk=math.sqrt(0.25+k2)
-    S = np.array([[ k[0]-1j*k[1], 0.5+epsk ],
-                  [ -0.5-epsk, k[0]+1j*k[1]]])        
-    factor=1./math.sqrt( epsk*(1.+2.*epsk) )        
-    return np.array([-epsk,epsk]),factor*S.T
+def TwistHamiltonian(kx,ky,k0,t,wc,wv):
+    # 4 bands twist hamiltonian
+    # input kx,ky in 2pi/a, wc,wc,t in Delta
+    # output eigenenergies in Delta
 
-@njit
-def eighT_noberry(k):
-    k2=k[0]*k[0]+k[1]*k[1]
-    epsk=math.sqrt(0.25+k2)
-    S = np.array([[ math.sqrt(k2), 0.5+epsk ],
-                  [ -0.5-epsk, math.sqrt(k2)]])        
-    factor=1./math.sqrt( epsk*(1.+2.*epsk) )        
-    return np.array([-epsk,epsk]),factor*S.T
+    K1 = k0*np.array([-0.5,0])
+    K2 = k0*np.array([0.5,0])
+    block_mono1 = t*(kx-K1[0])*sx+t*(ky-K1[1])*sy+0.5*sz
+    block_mono2 = t*(kx-K2[0])*sx+t*(ky-K2[1])*sy+0.5*sz
+    interlayer = np.array([[wc,0],[0,wv]])
+    ham = np.block([[block_mono1, np.conj(interlayer)],[interlayer, block_mono2]])
+    return ham
 
-@njit
+def eighTwistMesh(mesh,k0,t,wc,wv):
+    E=np.zeros((mesh.Np,4),dtype=np.float64)
+    U=np.zeros((mesh.Np,4,4),dtype=np.complex128)
+    for i,pi in enumerate(mesh.p):
+        ham = TwistHamiltonian(pi[0],pi[1],k0,t,wc,wv)
+        E[i],U[i]=np.linalg.eigh(ham)
+    return E,U
+
+class ContModel():
+    def __init__(self,Vc,psic,wc,Vv,psiv,wv):
+        self.list=[Vc,psic,wc,Vv,psiv,wv]
+        self.interlayer=np.array([[wc,0],[0,wv]])
+        self.intralayer=np.array([[Vc*np.exp(1.j*psic*np.pi/180),0],[0,Vv*np.exp(1.j*psiv*np.pi/180)]])
+
+def TwistDimHamiltonian(kx,ky,dim,k0,t,cm):
+    # 4*dim**2 bands twist hamiltonian
+    # input kx,ky in 2pi/a, wc,wc,t in Delta
+    # output eigenenergies in Delta
+    N=dim
+    K1 = k0*np.array([-0.5,0])
+    K2 = k0*np.array([0.5,0])
+    G1M = k0*np.sqrt(3)*np.array([-0.5*np.sqrt(3),0.5]) # g3 zihao, guiqung yu
+    G2M = k0*np.sqrt(3)*np.array([0.5*np.sqrt(3),0.5]) #  g1
+
+    dimlist = np.arange(-int(0.5*N),int(0.5*N))
+    k1x = np.array([kx+i*G1M[0]+j*G2M[0]-K1[0] for i in dimlist for j in dimlist])
+    k1y = np.array([ky+i*G1M[1]+j*G2M[1]-K1[1] for i in dimlist for j in dimlist])
+    k2x = np.array([kx+i*G1M[0]+j*G2M[0]-K2[0] for i in dimlist for j in dimlist])
+    k2y = np.array([ky+i*G1M[1]+j*G2M[1]-K2[1] for i in dimlist for j in dimlist])
+    k1 = np.array([k1x,k1y])
+    k2 = np.array([k2x,k2y])
+    six = np.array([sx for i in dimlist for j in dimlist])
+    siy = np.array([sy for i in dimlist for j in dimlist])
+    sii = np.array([six,siy])
+    si_k1 = np.einsum('ij,ijnk->jnk',k1,sii)
+    si_k2 = np.einsum('ij,ijnk->jnk',k2,sii)
+    longsz = np.kron(np.eye(N**2),sz)
+    ham_mono1 = t*block_diag(*si_k1.tolist())+0.5*longsz
+    ham_mono2 = t*block_diag(*si_k2.tolist())+0.5*longsz
+
+    keys0 = np.identity(N**2)
+    keysG2 = np.eye(N**2, k=-1) # 1 step down corresponds to +G2M scattering process (g1)
+    keysG1 = np.eye(N**2, k=-N) # N steps down corresponds to G1M scattering process (g3)
+    keysG3 = np.eye(N**2, k=-N-1) # correspongs to g1+g3 = -g2, matrix for g2 is then conjugated
+    intralayer = cm.intralayer
+    intra_scatg1 = np.kron(keysG2, intralayer)
+    # minus is from g2 = -(g1+g3)
+    intra_scatg2 = np.kron(keysG3, np.conj(intralayer))
+    intra_scatg3 = np.kron(keysG1, intralayer)
+    interlayer = cm.interlayer
+    inter_scat0 = np.kron(keys0, interlayer)
+    inter_scatg1 = np.kron(keysG2, interlayer)
+    inter_scatg3 = np.kron(keysG1, interlayer)
+
+    intra_scat = intra_scatg1 + intra_scatg2 + intra_scatg3
+    inter_scat = inter_scat0 + inter_scatg1 + inter_scatg3
+
+    # l=1 negative sign for the bottom layer
+    ham = np.block([[ham_mono1+np.conj(intra_scat), np.conj(inter_scat)],[inter_scat, ham_mono2+intra_scat]])
+    return ham
+
+def PlotGKMG(dim,k0,kstep0,t,cm,path='/pics'):
+    # plotting levels-levels moire bands GKMG dispersion
+    dir_path = path
+    N = dim
+    stepsGK = int(k0/kstep0)
+    stepsKM = int(1/2*k0/kstep0)
+    stepsMG = int(np.sqrt(3)/2*k0/kstep0)
+
+    kGKx = 0.5*kstep0
+    kGKy = 0.5*np.sqrt(3)*kstep0
+    kKMx = -1*kstep0
+    kKMy = 0
+    kMGx = 0
+    kMGy = -1*kstep0
+    kx = ky = 0 # start from G
+    eigenenergies = []
+
+    AllK = stepsGK+stepsKM+stepsMG
+    E = np.zeros((AllK,4*N**2),float)
+
+    for i in np.arange(stepsGK):
+        kx += kGKx
+        ky += kGKy
+        ham = TwistDimHamiltonian(kx,ky,dim,k0,t,cm)
+        eigenvalues = np.linalg.eigvalsh(ham)
+        E[i] = np.real(eigenvalues)
+
+    for i in np.arange(stepsGK,stepsGK+stepsKM):
+        kx += kKMx
+        ky += kKMy
+        ham = TwistDimHamiltonian(kx,ky,dim,k0,t,cm)
+        eigenvalues = np.linalg.eigvalsh(ham)
+        E[i] = np.real(eigenvalues)
+
+    for i in np.arange(stepsGK+stepsKM,stepsGK+stepsKM+stepsMG):
+        kx += kMGx
+        ky += kMGy
+        ham = TwistDimHamiltonian(kx,ky,dim,k0,t,cm)
+        eigenvalues = np.linalg.eigvalsh(ham)
+        E[i] = np.real(eigenvalues)
+
+
+    fig, ax = plt.subplots(figsize=(9,9))
+    for j in range(0,4*N**2):
+        plt.plot(np.arange(AllK), E[:,j], linestyle="-", linewidth=2)
+    ax.set_ylabel('E, Delta', fontsize=20)
+    plt.ylim(-0.75,0.75)
+    plt.xticks(np.array([0,stepsGK,stepsGK+stepsKM,stepsGK+stepsKM+stepsMG]),["G","K","M","G"], fontsize=20)
+    plt.tight_layout()
+    plt.savefig(path+'/GKMG.png',dpi=100)
+    plt.close()
+
+def eighTwistDimMesh(mesh,dim,k0,t,cm):
+    E=np.zeros((mesh.Np,4*dim**2),dtype=np.float64)
+    U=np.zeros((mesh.Np,4*dim**2,4*dim**2),dtype=np.complex128)
+    for i,pi in enumerate(mesh.p):
+        ham = TwistDimHamiltonian(pi[0],pi[1],dim,k0,t,cm)
+        E[i],U[i]=np.linalg.eigh(ham)
+    return E,U
+
 def Hbse(E,U,Wkk):
     Nk=E.shape[0]
     H=np.empty((Nk,Nk),dtype=np.complex128)
@@ -63,119 +172,31 @@ def Hbse(E,U,Wkk):
         H[i,i] += E[i,1] - E[i,0]
     return H
 
-@njit
-def Hbse_ndiag(U1,U2,Wkk):
-    Nk1=U1.shape[0]
-    Nk2=U2.shape[0]
-    H=np.empty((Nk1,Nk2),dtype=np.complex128)
-    for i in range(Nk1):
-        vi,ci=U1[i,0],U1[i,1]
-        for j in range(Nk2):
-            vj,cj=U2[j,0],U2[j,1]
+def TwistHbse(E,U,Wkk,ind_c,ind_v):
+    Nk=E.shape[0]
+    H=np.empty((Nk,Nk),dtype=np.complex128)
+    for i in range(Nk):
+        vi,ci=U[i,ind_c],U[i,ind_v]
+        for j in range(Nk):
+            vj,cj=U[j,ind_c],U[j,ind_v]
             vv = np.vdot(vj,vi)
             cc = np.vdot(ci,cj)         
             H[i,j] = -Wkk[i,j]*cc*vv
-    return H
-
-def Hbse_toeplitz(hexagon,Wk,l=0,berry=True):
-    E0,U0=eighT(hexagon.s[0],berry)
-    Wkk=interaction.bypairs(Wk,hexagon.s[0].inds,hexagon.s[0].inds)
-    s=1./math.sqrt(6.)
-    if(l!=0):
-        Wkk[0,0]=1.0 # this will give artificial 0 mode for l!=0
-    Wkk[0,1:]*=s
-    Wkk[1:,0]*=s
-    H=Hbse(E0,U0,Wkk)
-    for nsector in range(1,6):
-        E,U=eighT(hexagon.s[nsector],berry)
-        Wkk=interaction.bypairs(Wk,hexagon.s[0].inds,hexagon.s[nsector].inds)
-        Wkk[0,0]=0.
-        Wkk[0,1:]*=s
-        Wkk[1:,0]*=s
-        Hblock=Hbse_ndiag(U0,U,Wkk)
-        phase=cmath.exp(2.*math.pi*1j*l*nsector/6.)
-        H+=phase*Hblock
+    for i in range(Nk):
+        H[i,i] += E[i,ind_c] - E[i,ind_v]
     return H
 
 ### <c|operator|v>
-def cov_matrix_elements(operator,U):
-    vk,ck = U[:,0],U[:,1]
+def cov_matrix_elements(operator,U,ind_c,ind_v):
+    vk,ck = U[:,ind_v],U[:,ind_c]
     return np.einsum('ki,ij,kj->k',ck.conj(),operator,vk)
 
 def exciton_elements(Ux,cov):
     return np.einsum('nk,k->n',Ux,cov)
 
-### Analytic formula for chi0 in massive Dirac model (no spins, no valleys)
-# See Valera's Eq.(7) at g=1
-# Also, Eq.(6) in Kotov PRB 78, 075433 (2008), multiplied by 4.
-def chi0(omega):
-    q=-1j*omega    
-    bracket = 1./q + (1.-1./(q*q))*np.arctan(q)
-    return -bracket/(8*math.pi*q)
-
-### Evaluate chi
-# factor=kmesh.vcell/(2.*math.pi)**2
-# For broadening use: get_chi(omega+1j*eta)
-@njit
-def get_chi(factor,omega,dE,r):
-    chi=np.zeros(omega.size,dtype=np.complex128)
+def get_sigma(factor,omega,dE,r):
+    sigma=np.zeros(omega.size,dtype=np.complex128)
     for i in range(dE.shape[0]):
         s=abs(r[i])**2
-        chi += s/(omega-dE[i]) - s/(omega+np.conj(dE[i]))
-    return factor*chi
-    
-@njit    
-def get_dchi(factor,omega,dE,r):
-    dchi=np.zeros(omega.size,dtype=np.complex128)
-    for i in range(dE.shape[0]):
-        s=abs(r[i])**2
-        dchi += -s/(omega-dE[i])**2 + s/(omega+np.conj(dE[i]))**2
-    return factor*dchi
-
-# def get_chi_zeros_full(factor,dE,r,Xinf):
-#     N=dE.shape[0]
-#     Wmatrix = np.zeros((N,N),dtype=np.float64)
-#     Xmatrix = np.zeros((N,N),dtype=np.float64)
-#     Imatrix = np.ones((N,N),dtype=np.float64)
-#     np.fill_diagonal( Wmatrix, dE)
-#     np.fill_diagonal( Xmatrix, 2*dE*factor*np.abs(r)**2 )
-#     M=np.block([[Wmatrix,-Xmatrix/Xinf],[Imatrix,-Wmatrix]])
-#     return np.sort(np.linalg.eigvals(M))
-
-# def get_chi_zeros(factor,dE,r,Xinf):
-#     N=dE.shape[0]
-#     Wmatrix = np.zeros((N,N),dtype=np.float64)
-#     Xmatrix = np.zeros((N,N),dtype=np.float64)
-#     Imatrix = np.ones((N,N),dtype=np.float64)
-#     np.fill_diagonal( Wmatrix, dE)
-#     np.fill_diagonal( Xmatrix, 2*dE*factor*np.abs(r)**2 )
-#     M=Wmatrix@Wmatrix-Xmatrix@Imatrix/Xinf
-#     return np.sqrt(0.j+np.sort(np.linalg.eigvals(M)))
-
-# Zeros of the polynomial 1. + sum Fi/(w^2-wi^2)
-# Example:
-#     factor=kmesh.vcell/(2.*math.pi)**2
-#     F = factor*2.*Ex*np.abs(rx0)**2
-#     Fdiag = F/Finf
-#     get_zeros(Wdiag,Fdiag)
-def get_zeros(Wdiag,Fdiag):
-    N=Wdiag.shape[0]
-    Wmatrix = np.zeros((N,N),dtype=np.float64)
-    Fmatrix = np.zeros((N,N),dtype=np.float64)
-    Imatrix = np.ones((N,N),dtype=np.float64)
-    np.fill_diagonal( Wmatrix, Wdiag )
-    np.fill_diagonal( Fmatrix, Fdiag )
-    M=Wmatrix@Wmatrix-Fmatrix@Imatrix
-    return np.sqrt(0.j+np.sort(np.linalg.eigvals(M)))
-
-# Wdiag=dE
-# Xdiag = 2*dE*factor*np.abs(r)**2/Xinf
-# def get_zeros(Wdiag,Xdiag):
-#     N=Wdiag.shape[0]
-#     Wmatrix = np.zeros((N,N),dtype=np.float64)
-#     Xmatrix = np.zeros((N,N),dtype=np.float64)
-#     Imatrix = np.ones((N,N),dtype=np.float64)
-#     np.fill_diagonal( Wmatrix, Wdiag )
-#     np.fill_diagonal( Xmatrix, Xdiag )
-#     M=Wmatrix@Wmatrix-Xmatrix@Imatrix
-#     return np.sqrt(0.j+np.sort(np.linalg.eigvals(M)))
+        sigma += (s/dE[i])/(omega-dE[i]) - s/(omega+np.conj(dE[i]))
+    return factor*sigma
