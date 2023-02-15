@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from scipy import special
         
 class Keldysh():
-    def __init__(self,epseff,r0,kstep0):
-        self.epseff=epseff
+    def __init__(self,eps,r0,kstep0):
+        self.eps=eps
         self.r0=r0
         self.kstep0=kstep0
     
