@@ -1,0 +1,610 @@
+{
+	"Well": {
+		"StartDepth":2030.0,
+                "EndDepth":2217.0,
+		"CasingInnerRadius":0.0508,
+		"CasingOuterRadius":0.05715,
+		"CasingHeatConductivity":40.0,
+                "CementHeatConductivity": 1.0,
+		"WellboreRadius":0.07,
+		"InitialPressure": 240.0,
+		"InitialTemperature": [
+			{
+				"Depth": 0.0,
+				"T": 31.4
+			},
+			{
+				"Depth": 762.3,
+				"T": 48.1
+			},
+			{
+				"Depth": 1067.7,
+				"T": 60.6
+			},
+			{
+				"Depth": 1524.8,
+				"T": 62.3
+			},
+			{
+				"Depth": 1828.1,
+				"T": 68.2
+			},
+			{
+				"Depth": 2030.0,
+				"T": 75.2
+			},
+			{
+				"Depth": 2041.0,
+				"T": 78.0
+			},
+			{
+				"Depth": 2055.0,
+				"T": 77.0
+			},
+			{
+				"Depth": 2060.0,
+				"T": 78.0
+			},
+			{
+				"Depth": 2070.0,
+				"T": 78.5
+			},
+			{
+				"Depth": 2107.0,
+				"T": 73.3
+			},
+			{
+				"Depth": 2120.0,
+				"T": 78.5
+			},
+			{
+				"Depth": 2136.0,
+				"T": 79.0
+			},
+			{
+				"Depth": 2143.0,
+				"T": 77.0
+			},
+			{
+				"Depth": 2147.0,
+				"T": 75.2
+			},
+			{
+				"Depth":  2164.0,
+				"T": 52.0
+			},
+			{
+				"Depth": 2170.0,
+				"T": 48.2
+			},
+			{
+				"Depth": 2173.0,
+				"T": 47.0
+			},
+			{
+				"Depth": 2176.4,
+				"T": 46.4
+			},
+			{
+				"Depth": 2182.4,
+				"T": 42.6
+			},
+			{
+				"Depth": 2194.6,
+				"T": 42.2
+			},
+			{
+				"Depth": 2212.8,
+				"T": 66.4
+			},
+			{
+				"Depth": 2217.0,
+				"T": 74.0
+			}
+		],
+		"WBSCoefficient": 0.01
+	},
+	"Reservoirs": [
+		{
+			"Top": 2184.0,
+			"Bottom": 2207.5,
+			"Perforations": [
+				{
+					"Top": 2184.0,
+					"Bottom": 2207.5
+				}
+			],
+			"ExternalBoundaryPressure": 275.0,
+			"Porosity": 0.2,
+			"Permeability": [
+                {
+                    "Depth": 2184.0,
+                    "Value": 735.8159791493087
+                },
+                {
+                    "Depth": 2185.5,
+                    "Value": 505.83039509475159
+                },
+                {
+                    "Depth": 2188.5,
+                    "Value": 59.57348650568812
+                },
+                {
+                    "Depth": 2191.5,
+                    "Value": 234.585658778155
+                },
+                {
+                    "Depth": 2194.6,
+                    "Value": 94.65638715377321
+                },
+                {
+                    "Depth": 2197.6,
+                    "Value": 688.8803076354681
+                },
+                {
+                    "Depth": 2200.7,
+                    "Value": 0.12374671868358167
+                },
+                {
+                    "Depth": 2203.7,
+                    "Value": 0.0585240637569418
+                },
+                {
+                    "Depth": 2206.8,
+                    "Value": 0.03080988436608456
+                }
+			],
+			"MatrixDensity": 2200.0,
+			"MatrixHeatCapacity": 1850.0,
+			"MatrixHeatConductivity": 2.7,
+			"Compressibility": 1e-5,
+                        "DamageZoneWidth": 0.2,
+                        "SkinFactor": 1.0,
+                        "VerticalToRadialPermeabilityRatio": 1.0
+		}
+	],
+	"Rocks": [
+		{
+			"Density": 2500.0,
+			"HeatCapacity": 1800.0,
+			"HeatConductivity": 2.0,
+			"EndDepth": 1070.0
+		},
+		{
+			"Density": 2400.0,
+			"HeatCapacity": 1950.0,
+			"HeatConductivity": 2.0,
+			"EndDepth": 1590.0
+		},
+		{
+			"Density": 2650.0,
+			"HeatCapacity": 1950.0,
+			"HeatConductivity": 2.0,
+			"EndDepth": 2015.0
+		},
+		{
+			"Density": 2650.0,
+			"HeatCapacity": 2250.0,
+			"HeatConductivity": 3.2,
+			"EndDepth": 2040.0
+		},
+		{
+			"Density": 2650.0,
+			"HeatCapacity": 1950.0,
+			"HeatConductivity": 2.0,
+			"EndDepth": 2050.0
+		},
+		{
+			"Density": 2650.0,
+			"HeatCapacity": 2250.0,
+			"HeatConductivity": 3.2,
+			"EndDepth": 2110.0
+		},
+		{
+			"Density": 2650.0,
+			"HeatCapacity": 1950.0,
+			"HeatConductivity": 2.4,
+			"EndDepth": 2130.0
+		},
+		{
+			"Density": 2650.0,
+			"HeatCapacity": 2250.0,
+			"HeatConductivity": 3.4,
+			"EndDepth": 2170.0
+		},
+		{
+			"Density": 2650.0,
+			"HeatCapacity": 1950.0,
+			"HeatConductivity": 2.6,
+			"EndDepth": 2260.0
+		}
+	],
+	"Fluid": {
+		"Density": 1000.0,
+		"Compressibility": 5e-5,
+		"Viscosity": 1.0,
+		"HeatCapacity": 4200.0,
+		"HeatConductivity": 0.6,
+		"JouleThomsonCoefficient": 0.02,
+		"AdiabaticCoefficient": 0.002
+	},
+	"Grid": {
+		"VerticalStep": 2.0,
+		"RadialStep": 0.05,
+		"GrowthFactor": 1.05
+	},
+	"Schedule": {
+		"Type": "FlowRate",
+		"FlowRate": [
+				{
+					"Time": 0.0,
+					"Value": 0.0
+				},
+				{
+					"Time": 0.002,
+					"Value": 1110.0
+				},
+				{
+					"Time": 0.3,
+					"Value": 1110.0
+				},
+				{
+					"Time": 8.45,
+					"Value": 1110.0
+				},
+				{
+					"Time": 8.5,
+					"Value": 0.0
+				},
+				{
+					"Time": 18.1,
+					"Value": 0.0
+				}
+		],
+		"Temperature": [
+				{
+					"Time": 0.0,
+					"Value": 75.2
+				},
+				{
+					"Time": 0.002,
+					"Value": 75.2
+				},
+				{
+					"Time": 0.017,
+					"Value": 73.1
+				},
+				{
+					"Time": 0.034,
+					"Value": 70.3
+				},
+				{
+					"Time": 0.05,
+					"Value": 69.7
+				},
+				{
+					"Time": 0.067,
+					"Value": 69.3
+				},
+				{
+					"Time": 0.084,
+					"Value": 68.3
+				},
+				{
+					"Time": 0.1,
+					"Value": 66.6
+				},
+				{
+					"Time": 0.117,
+					"Value": 65.5
+				},
+				{
+					"Time": 0.134,
+					"Value": 64.4
+				},
+				{
+					"Time": 0.15,
+					"Value": 64.3
+				},
+				{
+					"Time": 0.167,
+					"Value": 63.1
+				},
+				{
+					"Time": 0.184,
+					"Value": 63.5
+				},
+				{
+					"Time": 0.2,
+					"Value": 62.7
+				},
+				{
+					"Time": 0.217,
+					"Value": 62.2
+				},
+				{
+					"Time": 0.234,
+					"Value": 62.1
+				},
+				{
+					"Time": 0.25,
+					"Value": 61.7
+				},
+				{
+					"Time": 1.35,
+					"Value": 66.7
+				},
+				{
+					"Time": 2.35,
+					"Value": 64.4
+				},
+				{
+					"Time": 3.1,
+					"Value": 48.9
+				},
+				{
+					"Time": 3.35,
+					"Value": 46.1
+				},
+				{
+					"Time": 3.52,
+					"Value": 45.5
+				},
+				{
+					"Time": 4.0,
+					"Value": 45.7
+				},
+				{
+					"Time": 5.0,
+					"Value": 46.2
+				},
+				{
+					"Time": 6.0,
+					"Value": 47.2
+				},
+				{
+					"Time": 7.0,
+					"Value": 47.8
+				},
+				{
+					"Time": 8.0,
+					"Value": 47.8
+				},
+				{
+					"Time": 9.0,
+					"Value": 53.3
+				},
+				{
+					"Time": 10.0,
+					"Value": 61.7
+				}
+		]
+	},
+	"RunConfig": {
+                "StartTime": 0.0,
+		"ModelingTime": 1.0,
+		"TimeStep": [
+			{
+				"Time": 10.0,
+				"Value":0.05
+			}
+		],
+                "InitReservoirPressureByWell": true,
+                "FormationExternalBoundary": 150.0,
+                "Gravity": 9.8
+
+	},
+	"Logs": {
+		"WellLogTimes": [
+            0.0, 0.017, 0.034, 0.05, 0.067, 0.084, 0.1, 0.117, 0.134, 0.15, 0.167, 0.184, 0.2, 0.217, 0.234, 0.25, 1.08, 1.58, 2.08, 2.33, 3.08, 4.08, 5.08, 6.08  
+		],
+		"PointLog": [
+			{
+				"Depth": 2217.0
+			}
+	]
+	},
+	"Inversion": {
+		"OptimizationAlgorithm": "LM",
+		"MaxObjFunctionCallCount": 10000,
+		"ThreadCount": 4,
+		"ObjFunctionParameters": [
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 2,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.017.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 3,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.034.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 4,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.05.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 5,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.067.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 6,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.084.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 7,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.1.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 8,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.117.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 9,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.134.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 10,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.15.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 11,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.167.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			},
+			{
+				"FieldFileName": "../../../../input/test/Integrated/InversionSimpleLM/field_blindtest_try_7k_v1.txt",
+				"FieldArgumentColNumber": 0,
+				"FieldValueColNumber": 12,
+				"FieldMeasurmentError": 1e0,
+				"ModelLogName": "well_0.184.log",
+				"ModelArgumentColNumber": 0,
+				"ModelValueColNumber": 2,
+				"UserWeightName": "weightName_end"
+			}
+		],
+"UserWeights": [
+			{
+			"Name": "weightName",
+			"Intervals": [
+						{
+							 "Start": 2030.0,
+							 "End": 2180.0,
+							 "Weight": 0.01
+						},
+						{
+							"Start": 2175.0,
+							"End": 2208.0,
+							"Weight": 1.0
+					   },
+					   {
+							"Start": 2208.0,
+							"End": 2217.0,
+							"Weight": 0.1
+					   }
+			  ]
+		},
+		{
+			"Name": "weightName_end",
+			"Intervals": [
+						{
+							 "Start": 2030.0,
+							 "End": 2180.0,
+							 "Weight": 0.01
+						},
+						{
+							"Start": 2190.0,
+							"End": 2208.0,
+							"Weight": 1.0
+					   },
+					   {
+							"Start": 2208.0,
+							"End": 2217.0,
+							"Weight": 0.1
+					   }
+			  ]
+		},
+		{
+			"Name": "weightName_p",
+			"Intervals": [
+						{
+							 "Start": 0.0,
+							 "End": 21.0,
+							 "Weight": 1.0
+						}
+			  ]
+		}
+],
+"UnknownParameters": [
+		{
+			"Name": "/Reservoirs/0/Permeability/5/Value",
+			"InitialValue": 100.0,
+					"MinValue": 0.0,
+					"MaxValue": 1500.0
+		},
+		{
+			"Name": "/Reservoirs/0/Permeability/6/Value",
+			"InitialValue": 100.15,
+					"MinValue": 0.0,
+					"MaxValue": 1500.0
+		},
+		{
+			"Name": "/Reservoirs/0/Permeability/7/Value",
+			"InitialValue": 100.15,
+					"MinValue": 0.0,
+					"MaxValue": 1500.0
+		},
+		{
+			"Name": "/Reservoirs/0/Permeability/8/Value",
+			"InitialValue": 100.15,
+					"MinValue": 0.0,
+					"MaxValue": 1500.0
+		}
+],
+"ConvergenceCriterias": [
+	{
+	"Target": "ObjFunction",
+	"Type": "AbsoluteChange",
+			"LastPointCount": 5,
+			"Criteria": 0.03
+}
+]
+}
+}
