@@ -47,6 +47,7 @@ class Parallelogram(Domain):
         self.cell = cell
         self.vcell = np.abs(np.linalg.det(cell))
         inds=N1*np.fft.fftfreq(N1)
+        #inds = np.arange(-int(0.5*N1),int(0.5*N1),1)
         ii,jj=np.meshgrid(inds,inds,indexing='ij')
         self.p = np.tensordot(ii,cell[0],axes=0) + np.tensordot(jj,cell[1],axes=0)         
     

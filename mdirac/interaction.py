@@ -17,8 +17,7 @@ class Keldysh():
     # integral 1/q over hex with side=1 = 3*sqrt(3)*log(3)
 
     def WK00(self,kmesh):
-        #factor=8.*math.pi # circle radius dp/2
-        # integral = 3*np.log(3) hexagon 
+        #integral = 3*np.log(3) #hexagon 
         integral = 4.254 # parallelogram
         factor = integral/self.eps*self.kstep0
         return factor

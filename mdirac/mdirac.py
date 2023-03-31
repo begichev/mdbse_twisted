@@ -5,13 +5,14 @@ from scipy.linalg import block_diag
 import matplotlib.pyplot as plt
 
 sx=np.array([[0,1],[1,0]])
-sy=np.array([[0,-1j],[1j,0]])
+sy=np.array([[0,1j],[-1j,0]])
 sz=np.array([[1,0], [0,-1]])
 
 def Hamiltonian(kx,ky,t):
     """
     input: dimensionless kx,ky in units of 2pi/a in BZ
     output: dimensionless energies and eigenvectors in BZ in units of Eg
+    eigenvectors in np.linalg.eigh are written in columns [:,i]
     """
     ham = 0.5*sz+t*kx*sx+t*ky*sy
     return ham
@@ -163,8 +164,11 @@ def Hbse(E,U,Wkk):
     H=np.empty((Nk,Nk),dtype=np.complex128)
     for i in range(Nk):
         vi,ci=U[i,0],U[i,1]
+        #vi,ci=U[i,:,0],U[i,:,1]
+        #somehow commented part gives wrong result, though it looks reliable
         for j in range(Nk):
             vj,cj=U[j,0],U[j,1]
+            #vj,cj=U[j,:,0],U[j,:,1]
             vv = np.vdot(vj,vi)
             cc = np.vdot(ci,cj)         
             H[i,j] = -Wkk[i,j]*cc*vv
@@ -188,15 +192,27 @@ def TwistHbse(E,U,Wkk,ind_c,ind_v):
 
 ### <c|operator|v>
 def cov_matrix_elements(operator,U,ind_c,ind_v):
-    vk,ck = U[:,ind_v],U[:,ind_c]
+    #vk,ck = U[:,ind_v],U[:,ind_c]
+    vk,ck = U[:,:,ind_v],U[:,:,ind_c]
     return np.einsum('ki,ij,kj->k',ck.conj(),operator,vk)
 
 def exciton_elements(Ux,cov):
-    return np.einsum('nk,k->n',Ux,cov)
+    return np.einsum('nk,k->n',np.transpose(Ux),cov)
 
-def get_sigma(factor,omega,dE,r):
+def get_sigma_xx(factor,omega,dE,rx):
+    """
+    rxx is array of computed matrix elements corresponding to transitions from v to c:
+    <c|rxx|v> 
+    """
     sigma=np.zeros(omega.size,dtype=np.complex128)
     for i in range(dE.shape[0]):
-        s=abs(r[i])**2
-        sigma += (s/dE[i])/(omega-dE[i]) - s/(omega+np.conj(dE[i]))
+        s=abs(rx[i])**2
+        sigma += (s/dE[i])/(omega-dE[i])
+    return factor*sigma
+
+def get_sigma_xy(factor,omega,dE,rx, ry):
+    sigma=np.zeros(omega.size,dtype=np.complex128)
+    for i in range(dE.shape[0]):
+        s=rx[i]*np.conj(ry[i])
+        sigma += (s/dE[i])/(omega-dE[i])
     return factor*sigma
